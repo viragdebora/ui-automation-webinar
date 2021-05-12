@@ -14,13 +14,20 @@ const testData2 = {
 
 const expect = require('chai').expect;
 const {departmentByLocation} = require("./testHelper");
+const {jobApplication} = require("./testHelper");
 const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
 const careerPageSearchForm = element(by.css(".recruiting-search__form"));
 const locationFilterArrow = element(by.css(".select2-selection__arrow"));
 const locationCity = element(by.css('[id*="Debrecen"'));
 const departmentFilterArrow = element(by.css(".selected-params"));
-const departmentInputField = element(by.css(".recruiting-search__input"));
+const departmentFilterForSTE = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[3]/section[1]/div[1]/div[2]/div[1]/form[1]/div[3]/div[1]/div[2]/div[1]/ul[2]/li[5]/label[1]/span[1]"));
+const selectedCityFieldSelector = ".select2-selection__rendered";
+const selectedDepartmentFieldSelector = `li[data-value="${testData1.department}"]`;
+const jobResultSelector = "a.search-result__item-name[href*='.test-automation-engineer']";
+const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[1]/div[1]/div[1]/section[1]/ul[1]/li[4]/div[1]/strong[1]";
+const jobDescriptionSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[1]/div[1]/div[1]/section[1]/ul[1]/li[4]/p[1]";
+const applyButtonSelector = "a.search-result__item-apply[href*='.test-automation-engineer']";
 
 describe("Search for job", function() {
     this.timeout(GLOBAL_TIMEOUT);
@@ -47,42 +54,64 @@ describe("Search for job", function() {
                 browser.sleep(1000);
             });
             it("should provide a way to filter to a specific location", async() => {
-                const selectedCity = await element(by.css(".select2-selection__rendered")).getText();
-                return expect(selectedCity).to.equal("Debrecen");
+                const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
+                return expect(selectedCity).to.equal(testData1.city);
             });
         });
 
         describe("Department filter box", () => {
             beforeEach(() => {
-                departmentInputField.sendKeys(testData1.positionName);
-                //browser.sleep(1000);
+                departmentFilterArrow.click();
+                browser.sleep(2000);
+                departmentFilterForSTE.click();
+                browser.sleep(2000);
+            });
+            it("should select one skill", async() => {
+                const selectedSkill = await element(by.css(".counter")).getText();
+                return expect(selectedSkill).to.equal("1");
             });
             it("should provide a way to filter to a specific department", async() => {
-                const selectedDepartmentElement = await element(by.css(".recruiting-search__input"));
-                const value = await selectedDepartmentElement.getAttribute('value');
-                return expect(value).to.equal(testData1.positionName);
+                const selectedDepartment = await element(by.css(selectedDepartmentFieldSelector)).getText();
+                return expect(selectedDepartment).to.equal(testData1.department.toUpperCase());
             });
         });
 
         describe("Searching", () => {
             beforeEach(() => {
-                departmentByLocation(testData1.positionName, testData1.city);
+                browser.sleep(2000);
+                departmentByLocation(testData1.department, testData1.city);
             });
-            it("should have a proper job found", () => {});
-            it("should have job with proper department", () => {});
-            it("should have job with proper location", () => {});
-            it("should have apply button for job", () => {});
+            it("should have a proper job found", async() => {
+                const jobResult = await element(by.css(jobResultSelector)).getText();
+                return expect(jobResult).to.equal(testData1.positionName);
+            });
+            it("should have job with proper location", async() => {
+                const jobLocation = await element(by.xpath(jobLocationSelector)).getText();
+                return expect(jobLocation.includes(testData1.city.toUpperCase())).to.be.true;
+            });
+            it("should have job with description", () => {
+                browser.sleep(2000);
+                const jobDescription = element(by.xpath(jobDescriptionSelector));
+                return expect(jobDescription.isPresent()).to.eventually.be.true;
+            });
+            it("should have apply button for job", () => {
+                browser.sleep(2000);
+                const jobResultApplyButton = element(by.css(applyButtonSelector));
+                return expect(jobResultApplyButton.isPresent()).to.eventually.be.true;
+            });
         });
 
-        describe.skip("Applying to position", () => {
+        describe("Applying to position", () => {
             beforeEach(() => {
-                return browser.get("https://www.epam.com/careers/job-listings/job.19100.test-automation-engineer_debrecen_hungary");
+                return jobApplication(testData1.department, testData1.city);
             });
             it("should have a proper position name in the description", async() => {
+                browser.sleep(1000);
                 const positionDescription = await element(by.css("h1")).getText();
                 return expect(positionDescription.includes(testData1.positionName)).to.be.true;
             });
             it("should have a proper location in the description", async() => {
+                browser.sleep(1000);
                 const locationDescription = await element(by.css(".recruiting-page__location")).getText();
                 return expect(locationDescription.includes(testData1.city)).to.be.true;
             });
