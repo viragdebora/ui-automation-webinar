@@ -1,15 +1,8 @@
-const testData1 = {
-    country : "Hungary",
-    city: "Debrecen",
-    department: "Software Test Engineering",
-    positionName: "Test Automation Engineer"
-};
-
 const testData2 = {
     country : "Belarus",
     city: "Minsk",
     department: "Software Architecture",
-    positionName: "Test Automation Architect"
+    positionName: "Azure Architect"
 };
 
 const expect = require('chai').expect;
@@ -19,17 +12,18 @@ const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
 const careerPageSearchForm = element(by.css(".recruiting-search__form"));
 const locationFilterArrow = element(by.css(".select2-selection__arrow"));
-const locationCity = element(by.css('[id*="Debrecen"'));
+const locationCountry = element(by.xpath("//strong[contains(text(),'Belarus')]"));
+const locationCity = element(by.css(`[id*="${testData2.city}"`));
 const departmentFilterArrow = element(by.css(".selected-params"));
-const departmentFilterForSTE = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[3]/section[1]/div[1]/div[2]/div[1]/form[1]/div[3]/div[1]/div[2]/div[1]/ul[2]/li[5]/label[1]/span[1]"));
+const departmentFilter = element(by.xpath("//span[contains(text(),'Software Architecture')]"));
 const selectedCityFieldSelector = ".select2-selection__rendered";
-const selectedDepartmentFieldSelector = `li[data-value="${testData1.department}"]`;
-const jobResultSelector = "a.search-result__item-name[href*='.test-automation-engineer']";
-const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[1]/div[1]/div[1]/section[1]/ul[1]/li[4]/div[1]/strong[1]";
-const jobDescriptionSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[1]/div[1]/div[1]/section[1]/ul[1]/li[4]/p[1]";
-const applyButtonSelector = "a.search-result__item-apply[href*='.test-automation-engineer']";
+const selectedDepartmentFieldSelector = `li[data-value="${testData2.department}"]`;
+const jobResultSelector = "a.search-result__item-name[href*='.azure-architect']";
+const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[1]/div[1]/strong[1]";
+const jobDescriptionSelector = "//p[contains(text(),'Azure Architect')]";
+const applyButtonSelector = "a.search-result__item-apply[href*='.azure-architect']";
 
-describe("Search for job", function() {
+describe("Search for Azure Architect in Minsk", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
         return browser.get(careerPageURL);
@@ -49,13 +43,15 @@ describe("Search for job", function() {
         describe("Location filter box", () => {
             beforeEach(() => {
                 locationFilterArrow.click();
+                browser.sleep(3000);
+                locationCountry.click();
                 browser.sleep(1000);
                 locationCity.click();
                 browser.sleep(1000);
             });
             it("should provide a way to filter to a specific location", async() => {
                 const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
-                return expect(selectedCity).to.equal(testData1.city);
+                return expect(selectedCity).to.equal(testData2.city);
             });
         });
 
@@ -63,7 +59,7 @@ describe("Search for job", function() {
             beforeEach(() => {
                 departmentFilterArrow.click();
                 browser.sleep(2000);
-                departmentFilterForSTE.click();
+                departmentFilter.click();
                 browser.sleep(2000);
             });
             it("should select one skill", async() => {
@@ -72,22 +68,22 @@ describe("Search for job", function() {
             });
             it("should provide a way to filter to a specific department", async() => {
                 const selectedDepartment = await element(by.css(selectedDepartmentFieldSelector)).getText();
-                return expect(selectedDepartment).to.equal(testData1.department.toUpperCase());
+                return expect(selectedDepartment).to.equal(testData2.department.toUpperCase());
             });
         });
 
         describe("Searching", () => {
             beforeEach(() => {
                 browser.sleep(2000);
-                departmentByLocation(testData1.department, testData1.city);
+                departmentByLocation(testData2.department, testData2.city);
             });
             it("should have a proper job found", async() => {
                 const jobResult = await element(by.css(jobResultSelector)).getText();
-                return expect(jobResult).to.equal(testData1.positionName);
+                return expect(jobResult).to.equal(testData2.positionName);
             });
             it("should have job with proper location", async() => {
                 const jobLocation = await element(by.xpath(jobLocationSelector)).getText();
-                return expect(jobLocation.includes(testData1.city.toUpperCase())).to.be.true;
+                return expect(jobLocation.includes(testData2.country.toUpperCase())).to.be.true;
             });
             it("should have job with description", () => {
                 browser.sleep(2000);
@@ -103,17 +99,17 @@ describe("Search for job", function() {
 
         describe("Applying to position", () => {
             beforeEach(() => {
-                return jobApplication(testData1.department, testData1.city);
+                return jobApplication(testData2.department, testData2.city);
             });
             it("should have a proper position name in the description", async() => {
                 browser.sleep(1000);
                 const positionDescription = await element(by.css("h1")).getText();
-                return expect(positionDescription.includes(testData1.positionName)).to.be.true;
+                return expect(positionDescription.includes(testData2.positionName)).to.be.true;
             });
             it("should have a proper location in the description", async() => {
                 browser.sleep(1000);
                 const locationDescription = await element(by.css(".recruiting-page__location")).getText();
-                return expect(locationDescription.includes(testData1.city)).to.be.true;
+                return expect(locationDescription.includes(testData2.country)).to.be.true;
             });
         });
     });

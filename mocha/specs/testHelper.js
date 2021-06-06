@@ -1,8 +1,8 @@
 const { browser } = require("protractor");
 
 function departmentDecision(department) {
-    const departmentFilterForSTE = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[3]/section[1]/div[1]/div[2]/div[1]/form[1]/div[3]/div[1]/div[2]/div[1]/ul[2]/li[5]/label[1]/span[1]"));
-    const departmentFilterForSA = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[3]/section[1]/div[1]/div[2]/div[1]/form[1]/div[3]/div[1]/div[2]/div[1]/ul[2]/li[3]/label[1]/span[1]"));
+    const departmentFilterForSTE = element(by.xpath("//span[contains(text(),'Software Test Engineering')]"));
+    const departmentFilterForSA = element(by.xpath("//span[contains(text(),'Software Architecture')]"));
     switch(department) {
         case "Software Test Engineering": return departmentFilterForSTE;
         case "Software Architecture": return departmentFilterForSA;
@@ -11,6 +11,7 @@ function departmentDecision(department) {
 
 function departmentByLocation(department, location) {
     const locationFilterArrow = element(by.css(".select2-selection__arrow"));
+    const locationCountry = element(by.xpath("//strong[contains(text(),'Belarus')]"));
     const locationCity = element(by.css(`[id*="${location}"`));
     const departmentFilterArrow = element(by.css(".selected-params"));
     const submitButton = element(by.css(".recruiting-search__submit"));
@@ -18,6 +19,11 @@ function departmentByLocation(department, location) {
     browser.sleep(1000);
     locationFilterArrow.click();
     browser.sleep(1000);
+    if(location === "Minsk") {
+        browser.sleep(3000);
+        locationCountry.click();
+        browser.sleep(1000); 
+    }
     locationCity.click();
     browser.sleep(1000);
     departmentFilterArrow.click();
@@ -29,10 +35,14 @@ function departmentByLocation(department, location) {
 }
 
 function jobApplication(department, location) {
-    const applyButton = element(by.css("a.search-result__item-apply[href*='.test-automation-engineer']"));
+    const applyButtonSTE = element(by.css("a.search-result__item-apply[href*='.test-automation-engineer']"));
+    const applyButtonAA = element(by.css("a.search-result__item-apply[href*='.azure-architect']"));
     departmentByLocation(department, location);
     browser.sleep(2000);
-    applyButton.click();
+    switch(department) {
+        case "Software Test Engineering": applyButtonSTE.click(); break;
+        case "Software Architecture": applyButtonAA.click(); break;
+    }
 }
 
 module.exports = {departmentByLocation, jobApplication};
