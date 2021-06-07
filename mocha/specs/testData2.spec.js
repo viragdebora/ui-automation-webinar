@@ -11,6 +11,7 @@ const {jobApplication} = require("./testHelper");
 const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
 const careerPageSearchForm = element(by.css(".recruiting-search__form"));
+const jobSearchFilterForm = element(by.xpath("//body/div[@id='wrapper']/main[@id='main']/div[1]/div[3]/div[1]"));
 const locationFilterArrow = element(by.css(".select2-selection__arrow"));
 const locationCountry = element(by.xpath("//strong[contains(text(),'Belarus')]"));
 const locationCity = element(by.css(`[id*="${testData2.city}"`));
@@ -26,7 +27,7 @@ const applyButtonSelector = "a.search-result__item-apply[href*='.azure-architect
 describe("Search for Azure Architect in Minsk", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
-        return browser.get(careerPageURL);
+        browser.get(careerPageURL);
     });
 
     describe("Career page", () => {
@@ -42,9 +43,10 @@ describe("Search for Azure Architect in Minsk", function() {
 
         describe("Location filter box", () => {
             beforeEach(() => {
+                browser.actions().mouseMove(jobSearchFilterForm).perform();
                 locationFilterArrow.click();
-                browser.sleep(3000);
-                locationCountry.click();
+                browser.sleep(1000);
+                browser.actions().mouseMove(locationCountry).click().perform();
                 browser.sleep(1000);
                 locationCity.click();
                 browser.sleep(1000);
@@ -58,9 +60,9 @@ describe("Search for Azure Architect in Minsk", function() {
         describe("Department filter box", () => {
             beforeEach(() => {
                 departmentFilterArrow.click();
-                browser.sleep(2000);
+                browser.sleep(1000);
                 departmentFilter.click();
-                browser.sleep(2000);
+                browser.sleep(1000);
             });
             it("should select one skill", async() => {
                 const selectedSkill = await element(by.css(".counter")).getText();
@@ -74,8 +76,9 @@ describe("Search for Azure Architect in Minsk", function() {
 
         describe("Searching", () => {
             beforeEach(() => {
-                browser.sleep(2000);
                 departmentByLocation(testData2.department, testData2.city);
+                const jobFound = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[2]"));
+                browser.actions().mouseMove(jobFound).perform();
             });
             it("should have a proper job found", async() => {
                 const jobResult = await element(by.css(jobResultSelector)).getText();
@@ -86,12 +89,10 @@ describe("Search for Azure Architect in Minsk", function() {
                 return expect(jobLocation.includes(testData2.country.toUpperCase())).to.be.true;
             });
             it("should have job with description", () => {
-                browser.sleep(2000);
                 const jobDescription = element(by.xpath(jobDescriptionSelector));
                 return expect(jobDescription.isPresent()).to.eventually.be.true;
             });
             it("should have apply button for job", () => {
-                browser.sleep(2000);
                 const jobResultApplyButton = element(by.css(applyButtonSelector));
                 return expect(jobResultApplyButton.isPresent()).to.eventually.be.true;
             });
@@ -102,12 +103,10 @@ describe("Search for Azure Architect in Minsk", function() {
                 return jobApplication(testData2.department, testData2.city);
             });
             it("should have a proper position name in the description", async() => {
-                browser.sleep(1000);
                 const positionDescription = await element(by.css("h1")).getText();
                 return expect(positionDescription.includes(testData2.positionName)).to.be.true;
             });
             it("should have a proper location in the description", async() => {
-                browser.sleep(1000);
                 const locationDescription = await element(by.css(".recruiting-page__location")).getText();
                 return expect(locationDescription.includes(testData2.country)).to.be.true;
             });
