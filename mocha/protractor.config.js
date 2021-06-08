@@ -3,9 +3,15 @@
 const GLOBAL_TIMEOUT = 40e3;
 
 exports.config = {
-    specs: 'specs/**/*.spec.js',
+    //specs: 'specs/**/*.spec.js',
+    specs: [
+        'specs/**/testData1.spec.js',
+        'specs/**/testData2.spec.js'
+    ],
     capabilities: {
-        browserName: 'chrome'
+        browserName: 'chrome',
+        'shardTestFiles': true,
+        'maxInstances': 2
     },
     directConnect: true,
     mochaOpts: {
