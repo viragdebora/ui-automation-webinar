@@ -1,4 +1,15 @@
 const { browser } = require("protractor");
+const EC = protractor.ExpectedConditions;
+
+function cookieSegmentClose() {
+    browser.isElementPresent(by.css(".cookie-disclaimer__button"))
+        .then(isPresent => {
+            if (isPresent) {
+                const cookieButton = element(by.css(".cookie-disclaimer__button"));
+                cookieButton.click();
+            }
+        });
+}
 
 function departmentDecision(department) {
     const departmentFilterForSTE = element(by.xpath("//span[contains(text(),'Software Test Engineering')]"));
@@ -56,4 +67,4 @@ function jobApplication(department, location) {
     }
 }
 
-module.exports = {departmentByLocation, jobApplication};
+module.exports = {departmentByLocation, jobApplication, cookieSegmentClose};

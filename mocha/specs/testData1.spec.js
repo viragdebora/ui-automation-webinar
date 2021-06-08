@@ -6,8 +6,7 @@ const testData1 = {
 };
 
 const expect = require('chai').expect;
-const {departmentByLocation} = require("./testHelper");
-const {jobApplication} = require("./testHelper");
+const {departmentByLocation, jobApplication, cookieSegmentClose} = require("./testHelper");
 const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
 const careerPageSearchForm = element(by.css(".recruiting-search__form"));
@@ -22,10 +21,11 @@ const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/secti
 const jobDescriptionSelector = "//p[contains(text(),'Test Automation Engineer')]";
 const applyButtonSelector = "a.search-result__item-apply[href*='.test-automation-engineer']";
 
-describe.skip("Search for Test Automation Engineer in Debrecen", function() {
+describe("Search for Test Automation Engineer in Debrecen", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
-        return browser.get(careerPageURL);
+        browser.get(careerPageURL);
+        cookieSegmentClose();
     });
 
     describe("Career page", () => {

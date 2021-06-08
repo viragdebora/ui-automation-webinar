@@ -6,8 +6,7 @@ const testData2 = {
 };
 
 const expect = require('chai').expect;
-const {departmentByLocation} = require("./testHelper");
-const {jobApplication} = require("./testHelper");
+const {departmentByLocation, jobApplication, cookieSegmentClose} = require("./testHelper");
 const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
 const careerPageSearchForm = element(by.css(".recruiting-search__form"));
@@ -24,10 +23,11 @@ const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/secti
 const jobDescriptionSelector = "//p[contains(text(),'Azure Architect')]";
 const applyButtonSelector = "a.search-result__item-apply[href*='.azure-architect']";
 
-describe("Search for Azure Architect in Minsk", function() {
+describe.skip("Search for Azure Architect in Minsk", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
         browser.get(careerPageURL);
+        cookieSegmentClose();
     });
 
     describe("Career page", () => {
