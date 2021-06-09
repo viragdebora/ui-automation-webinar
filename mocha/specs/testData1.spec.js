@@ -6,6 +6,7 @@ const testData1 = {
 };
 
 const expect = require('chai').expect;
+const EC = protractor.ExpectedConditions;
 const {departmentByLocation, jobApplication, cookieSegmentClose} = require("./testHelper");
 const careerPageURL = "https://www.epam.com/careers";
 const careerPageLogo = element(by.css(".header__logo"));
@@ -21,7 +22,7 @@ const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/secti
 const jobDescriptionSelector = "//p[contains(text(),'Test Automation Engineer')]";
 const applyButtonSelector = "a.search-result__item-apply[href*='.test-automation-engineer']";
 
-describe("Search for Test Automation Engineer in Debrecen", function() {
+describe.skip("Search for Test Automation Engineer in Debrecen", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
         browser.get(careerPageURL);
@@ -42,9 +43,8 @@ describe("Search for Test Automation Engineer in Debrecen", function() {
         describe("Location filter box", () => {
             beforeEach(() => {
                 locationFilterArrow.click();
-                browser.sleep(1000);
+                EC.visibilityOf(locationCity);
                 locationCity.click();
-                browser.sleep(1000);
             });
             it("should provide a way to filter to a specific location", async() => {
                 const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
@@ -55,9 +55,8 @@ describe("Search for Test Automation Engineer in Debrecen", function() {
         describe("Department filter box", () => {
             beforeEach(() => {
                 departmentFilterArrow.click();
-                browser.sleep(2000);
+                EC.visibilityOf(departmentFilter);
                 departmentFilter.click();
-                browser.sleep(2000);
             });
             it("should select one skill", async() => {
                 const selectedSkill = await element(by.css(".counter")).getText();
@@ -71,7 +70,6 @@ describe("Search for Test Automation Engineer in Debrecen", function() {
 
         describe("Searching", () => {
             beforeEach(() => {
-                browser.sleep(2000);
                 departmentByLocation(testData1.department, testData1.city);
                 const jobFound = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[5]"));
                 browser.actions().mouseMove(jobFound).perform();

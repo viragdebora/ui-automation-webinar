@@ -29,21 +29,22 @@ function departmentByLocation(department, location) {
     const submitButton = element(by.css(".recruiting-search__submit"));
     
     browser.actions().mouseMove(jobSearchFilterForm).perform();
-    browser.sleep(1000);
+    EC.visibilityOf(locationFilterArrow);
     locationFilterArrow.click();
     browser.sleep(1000);
     if(location === "Minsk") {
         browser.actions().mouseMove(locationCountry).click().perform();
         browser.sleep(1000); 
     }
+    EC.visibilityOf(locationCity);
     locationCity.click();
-    browser.sleep(1000);
+    EC.visibilityOf(departmentFilterArrow);
     departmentFilterArrow.click();
     browser.sleep(1000);
     departmentDecision(department).click();
-    browser.sleep(1000);
+    EC.visibilityOf(submitButton);
     submitButton.click();
-    browser.sleep(2000);
+    browser.sleep(1000);
 }
 
 function scrollToElement(department) {
@@ -60,7 +61,7 @@ function jobApplication(department, location) {
     const applyButtonAA = element(by.css("a.search-result__item-apply[href*='.azure-architect']"));
     departmentByLocation(department, location);
     scrollToElement(department);
-    browser.sleep(2000);
+
     switch(department) {
         case "Software Test Engineering": applyButtonSTE.click(); break;
         case "Software Architecture": applyButtonAA.click(); break;

@@ -60,9 +60,8 @@ describe.skip("Search for Azure Architect in Minsk", function() {
         describe("Department filter box", () => {
             beforeEach(() => {
                 departmentFilterArrow.click();
-                browser.sleep(1000);
+                EC.visibilityOf(departmentFilter);
                 departmentFilter.click();
-                browser.sleep(1000);
             });
             it("should select one skill", async() => {
                 const selectedSkill = await element(by.css(".counter")).getText();
@@ -77,7 +76,7 @@ describe.skip("Search for Azure Architect in Minsk", function() {
         describe("Searching", () => {
             beforeEach(() => {
                 departmentByLocation(testData2.department, testData2.city);
-                const jobFound = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[2]"));
+                const jobFound = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[1]"));
                 browser.actions().mouseMove(jobFound).perform();
             });
             it("should have a proper job found", async() => {
