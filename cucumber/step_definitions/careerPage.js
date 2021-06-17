@@ -1,7 +1,7 @@
 'use strict';
 
 const { Given, When, Then, setDefaultTimeout } = require('cucumber');
-const { browser } = require('protractor');
+const { browser, element } = require('protractor');
 setDefaultTimeout(GLOBAL_TIMEOUT);
 
 const locationFilterArrow = element(by.css(".select2-selection__arrow"));
@@ -18,12 +18,16 @@ const jobFoundSTE = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div
 const jobFoundSA = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[4]"));
 const jobResultSelectorSTE = "a.search-result__item-name[href*='.test-automation-engineer']";
 const jobResultSelectorSA = "a.search-result__item-name[href*='.digital-solutions-architect']";
-const jobLocationSelectorSTE = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[5]/div[1]/strong[1]";
+//const jobLocationSelectorSTE = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[5]/div[1]/strong[1]";
+const jobLocationSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__location";
 const jobLocationSelectorSA = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[4]/div[1]/strong[1]";
-const jobDescriptionSelectorSTE = "//p[contains(text(),'Test Automation Engineer')]";
+const jobDescriptionSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__item-description";
 const jobDescriptionSelectorSA = "//p[contains(text(),'Digital Solutions Architect')]";
 const applyButtonSelectorSTE = "a.search-result__item-apply[href*='.test-automation-engineer']";
 const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solutions-architect']";
+const logo = ".header__logo";
+const search_form = ".recruiting-search__form";
+
 
   //Givens
   Given(/the career page is opened/, function () {
@@ -85,15 +89,17 @@ const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solut
         });
   });
 
-  Then(/the logo should be visible/, function () {
-    const careerPageLogo = element(by.css(".header__logo"));
-    return expect(careerPageLogo.isPresent()).to.eventually.be.true;
+  Then(/the "(.*)" should be visible by (css|xpath)/, function (selector, type) {
+    const selectedElement = (type === "css") ? element(by.css(selector)) : element(by.xpath(selector));
+    console.log(selector);
+    console.log(type);
+    return expect(selectedElement.isPresent()).to.eventually.be.true;
   });
 
-  Then(/search form should be visible/, function () {
-    const careerPageSearchForm = element(by.css(".recruiting-search__form"));
-    return expect(careerPageSearchForm.isPresent()).to.eventually.be.true;
-  });
+  // Then(/search form should be visible/, function () {
+  //   const careerPageSearchForm = element(by.css(".recruiting-search__form"));
+  //   return expect(careerPageSearchForm.isPresent()).to.eventually.be.true;
+  // });
 
   Then(/the Debrecen should be selected/,async function () {
     const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
@@ -128,7 +134,7 @@ const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solut
   });
 
   Then(/should have Test Automation Engineer the proper location Debrecen, Hungary/, async function () {
-    const jobLocation = await element(by.xpath(jobLocationSelectorSTE)).getText();
+    const jobLocation = await element(by.css(jobLocationSelectorSTE)).getText();
     return expect(jobLocation.includes("Debrecen".toUpperCase())).to.be.true;
   });
 
@@ -138,7 +144,8 @@ const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solut
   });
 
   Then(/should have description in the position of Test Automation Engineer/, function () {
-    const jobDescription = element(by.xpath(jobDescriptionSelectorSTE));
+    const jobDescription = element(by.css(jobDescriptionSelectorSTE));
+    browser.sleep(10000);
     return expect(jobDescription.isPresent()).to.eventually.be.true;
   });
 

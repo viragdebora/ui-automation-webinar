@@ -6,10 +6,9 @@ Feature: EPAM job searching
   Scenario Outline: Search for <PositionName> in <City>
   Given the career page is opened
   Then the cookie bar should be closed
-  And the logo should be visible
-  And search form should be visible
+  And the "logo" should be visible by css
+  And the "search_form" should be visible by css
   
-
   When <Country> and <City> selected in the location filter box
   Then the <City> should be selected
 
