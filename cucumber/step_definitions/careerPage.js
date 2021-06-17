@@ -22,7 +22,7 @@ const jobResultSelectorSA = "a.search-result__item-name[href*='.digital-solution
 const jobLocationSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__location";
 const jobLocationSelectorSA = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[4]/div[1]/strong[1]";
 const jobDescriptionSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__item-description";
-const jobDescriptionSelectorSA = "//p[contains(text(),'Digital Solutions Architect')]";
+const jobDescriptionSelectorSA = ".search-result__item:nth-of-type(4) .search-result__item-description";
 const applyButtonSelectorSTE = "a.search-result__item-apply[href*='.test-automation-engineer']";
 const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solutions-architect']";
 const logo = ".header__logo";
@@ -89,17 +89,22 @@ const search_form = ".recruiting-search__form";
         });
   });
 
-  Then(/the "(.*)" should be visible by (css|xpath)/, function (selector, type) {
-    const selectedElement = (type === "css") ? element(by.css(selector)) : element(by.xpath(selector));
-    console.log(selector);
-    console.log(type);
-    return expect(selectedElement.isPresent()).to.eventually.be.true;
+  // Then(/the "(.*)" should be visible by (css|xpath)/, function (selector, type) {
+  //   const selectedElement = (type === "css") ? element(by.css(selector)) : element(by.xpath(selector));
+  //   console.log(selector);
+  //   console.log(type);
+  //   return expect(selectedElement.isPresent()).to.eventually.be.true;
+  // });
+
+  Then(/the logo should be visible/, function () {
+    const logoSelector = element(by.css(logo));
+    return expect(logoSelector.isPresent()).to.eventually.be.true;
   });
 
-  // Then(/search form should be visible/, function () {
-  //   const careerPageSearchForm = element(by.css(".recruiting-search__form"));
-  //   return expect(careerPageSearchForm.isPresent()).to.eventually.be.true;
-  // });
+  Then(/search form should be visible/, function () {
+    const careerPageSearchForm = element(by.css(".recruiting-search__form"));
+    return expect(careerPageSearchForm.isPresent()).to.eventually.be.true;
+  });
 
   Then(/the Debrecen should be selected/,async function () {
     const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
@@ -143,14 +148,15 @@ const search_form = ".recruiting-search__form";
     return expect(jobLocation.includes("Minsk".toUpperCase())).to.be.true;
   });
 
-  Then(/should have description in the position of Test Automation Engineer/, function () {
+  Then(/should have Test Automation Engineer with description/, function () {
     const jobDescription = element(by.css(jobDescriptionSelectorSTE));
-    browser.sleep(10000);
+    browser.sleep(5000);
     return expect(jobDescription.isPresent()).to.eventually.be.true;
   });
 
-  Then(/should have description in the position of Digital Solutions Architect/, function () {
-    const jobDescription = element(by.xpath(jobDescriptionSelectorSA));
+  Then(/should have Digital Solutions Architect with description/, function () {
+    const jobDescription = element(by.css(jobDescriptionSelectorSA));
+    browser.sleep(5000);
     return expect(jobDescription.isPresent()).to.eventually.be.true;
   });
 
@@ -164,12 +170,12 @@ const search_form = ".recruiting-search__form";
     return expect(jobResultApplyButton.isPresent()).to.eventually.be.true;
   });
 
-  Then(/should have Test Automation Engineer with description/, async function () {
+  Then(/should have description in the position of Test Automation Engineer/, async function () {
     const positionDescription = await element(by.css("h1")).getText();
     return expect(positionDescription.includes("Test Automation Engineer")).to.be.true;
   });
 
-  Then(/should have Digital Solutions Architect with description/, async function () {
+  Then(/should have description in the position of Digital Solutions Architect/, async function () {
     const positionDescription = await element(by.css("h1")).getText();
     return expect(positionDescription.includes("Digital Solutions Architect")).to.be.true;
   });
