@@ -5,29 +5,8 @@ const { browser, element } = require('protractor');
 setDefaultTimeout(GLOBAL_TIMEOUT);
 
 const locationFilterArrow = element(by.css(".select2-selection__arrow"));
-const locationCityDebrecen = element(by.css('[id*="Debrecen"]'));
-const locationCountryBelarus = element(by.xpath("//strong[contains(text(),'Belarus')]"));
-const locationCityMinsk = element(by.css('[id*="Minsk"]'));
 const selectedCityFieldSelector = ".select2-selection__rendered";
 const departmentFilterArrow = element(by.css(".selected-params"));
-const departmentFilterSTE = element(by.xpath("//span[contains(text(),'Software Test Engineering')]"));
-const departmentFilterSA = element(by.xpath("//span[contains(text(),'Software Architecture')]"));
-const selectedDepartmentFieldSelectorSTE = `li[data-value="Software Test Engineering"]`;
-const selectedDepartmentFieldSelectorSA = `li[data-value="Software Architecture"]`;
-const jobFoundSTE = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[5]"));
-const jobFoundSA = element(by.xpath("/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[4]"));
-const jobResultSelectorSTE = "a.search-result__item-name[href*='.test-automation-engineer']";
-const jobResultSelectorSA = "a.search-result__item-name[href*='.digital-solutions-architect']";
-//const jobLocationSelectorSTE = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[5]/div[1]/strong[1]";
-const jobLocationSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__location";
-const jobLocationSelectorSA = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/section[1]/div[2]/div[1]/div[1]/section[2]/ul[1]/li[4]/div[1]/strong[1]";
-const jobDescriptionSelectorSTE = ".search-result__item:nth-of-type(5) .search-result__item-description";
-const jobDescriptionSelectorSA = ".search-result__item:nth-of-type(4) .search-result__item-description";
-const applyButtonSelectorSTE = "a.search-result__item-apply[href*='.test-automation-engineer']";
-const applyButtonSelectorSA = "a.search-result__item-apply[href*='.digital-solutions-architect']";
-const logo = ".header__logo";
-const search_form = ".recruiting-search__form";
-
 
   //Givens
   Given(/the career page is opened/, function () {
@@ -35,31 +14,23 @@ const search_form = ".recruiting-search__form";
   });
 
   //Whens
-  When(/Hungary and Debrecen selected in the location filter box/, function () {
+  When(/(.*) and (.*) selected in the location filter box/, function (country, city) {
+    const locationCountry = element(by.xpath(`//strong[contains(text(),'${country}')]`));
+    const locationCity = element(by.css(`[id*="${city}"]`));
     locationFilterArrow.click();
     browser.sleep(1000);
-    return locationCityDebrecen.click();
+    if (city === "Minsk") {
+      browser.actions().mouseMove(locationCountry).click().perform();
+    }
+    browser.sleep(1000);
+    return locationCity.click();
   });
 
-  When('Belarus and Minsk selected in the location filter box', function () {
-    locationFilterArrow.click();
-    browser.sleep(1000);
-    browser.actions().mouseMove(locationCountryBelarus).click().perform();
-    browser.sleep(1000);
-    return locationCityMinsk.click();
-  });
-
-  When(/Software Architecture selected in the department filter box/, function () {
+  When(/(.*) selected in the department filter box/, function (department) {
+    const departmentFilter = element(by.xpath(`//span[contains(text(),'${department}')]`));
     departmentFilterArrow.click();
     browser.sleep(1000);
-    departmentFilterSA.click();
-    return browser.sleep(1000);
-  });
-
-  When(/Software Test Engineering selected in the department filter box/, function () {
-    departmentFilterArrow.click();
-    browser.sleep(1000);
-    departmentFilterSTE.click();
+    departmentFilter.click();
     return browser.sleep(1000);
   });
 
@@ -68,14 +39,11 @@ const search_form = ".recruiting-search__form";
     return submitButton.click();
   });
 
-  When(/the apply button for Test Automation Engineer is clicked/, function () {
-    const applyButtonSTE = element(by.css(applyButtonSelectorSTE));
-    return applyButtonSTE.click();
-  });
-
-  When(/the apply button for Digital Solutions Architect is clicked/, function () {
-    const applyButtonSA = element(by.css(applyButtonSelectorSA));
-    return applyButtonSA.click();
+  When(/the apply button for (.*) is clicked/, function (positionName) {
+    const form = positionName.toLowerCase().split(" ").join("-");
+    const applyButtonSelector = `a.search-result__item-apply[href*='.${form}']`;
+    const applyButton = element(by.css(applyButtonSelector));
+    return applyButton.click();
   });
 
   //Thens
@@ -89,103 +57,57 @@ const search_form = ".recruiting-search__form";
         });
   });
 
-  // Then(/the "(.*)" should be visible by (css|xpath)/, function (selector, type) {
-  //   const selectedElement = (type === "css") ? element(by.css(selector)) : element(by.xpath(selector));
-  //   console.log(selector);
-  //   console.log(type);
-  //   return expect(selectedElement.isPresent()).to.eventually.be.true;
-  // });
-
-  Then(/the logo should be visible/, function () {
-    const logoSelector = element(by.css(logo));
-    return expect(logoSelector.isPresent()).to.eventually.be.true;
+  Then(/the "(.*)" should be visible/, function (selector) {
+    const logo = ".header__logo";
+    const search_form = ".recruiting-search__form";
+    const selectedElement = (selector === "logo") ? element(by.css(logo)) : element(by.css(search_form));
+    return expect(selectedElement.isPresent()).to.eventually.be.true;
   });
 
-  Then(/search form should be visible/, function () {
-    const careerPageSearchForm = element(by.css(".recruiting-search__form"));
-    return expect(careerPageSearchForm.isPresent()).to.eventually.be.true;
-  });
-
-  Then(/the Debrecen should be selected/,async function () {
+  Then(/the (.*) location should be selected/,async function (city) {
     const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
-    return expect(selectedCity).to.equal("Debrecen");
+    return expect(selectedCity).to.equal(city);
   });
 
-  Then(/the Minsk should be selected/, async function () {
-    const selectedCity = await element(by.css(selectedCityFieldSelector)).getText();
-    return expect(selectedCity).to.equal("Minsk");
+  Then(/the (.*) department should be selected/, async function (department) {
+    const selectedDepartmentFieldSelector = `li[data-value="${department}"]`;
+    const selectedDepartment = await element(by.css(selectedDepartmentFieldSelector)).getText();
+    return expect(selectedDepartment).to.equal(department.toUpperCase());
   });
 
-  Then(/the Software Test Engineering should be selected/, async function () {
-    const selectedDepartment = await element(by.css(selectedDepartmentFieldSelectorSTE)).getText();
-    return expect(selectedDepartment).to.equal("Software Test Engineering".toUpperCase());
+  Then(/should have a proper job found for (.*) position/, async function (positionName) {
+    const form = positionName.toLowerCase().split(" ").join("-");
+    const jobResultSelector = element(by.css(`a.search-result__item-name[href*='.${form}']`));
+    browser.actions().mouseMove(jobResultSelector).perform();
+    //const jobResult = await jobResultSelector.getText();
+    return expect(await jobResultSelector.getText()).to.equal(positionName);
   });
 
-  Then(/the Software Architecture should be selected/, async function () {
-    const selectedDepartment = await element(by.css(selectedDepartmentFieldSelectorSA)).getText();
-    return expect(selectedDepartment).to.equal("Software Architecture".toUpperCase());
+  Then(/the proper location in the (\d+)th result should be (.*)/, async function (hit, city) {
+    const jobLocationSelector = `.search-result__item:nth-of-type(${hit}) .search-result__location`;
+    const jobLocation = await element(by.css(jobLocationSelector)).getText();
+    return expect(jobLocation.includes(city.toUpperCase())).to.be.true;
   });
 
-  Then(/should have a proper job found for Test Automation Engineer/, async function () {
-    browser.actions().mouseMove(jobFoundSTE).perform();
-    const jobResult = await element(by.css(jobResultSelectorSTE)).getText();
-    return expect(jobResult).to.equal("Test Automation Engineer");
-  });
-
-  Then(/should have a proper job found for Digital Solutions Architect/, async function () {
-    browser.actions().mouseMove(jobFoundSA).perform();
-    const jobResult = await element(by.css(jobResultSelectorSA)).getText();
-    return expect(jobResult).to.equal("Digital Solutions Architect");
-  });
-
-  Then(/should have Test Automation Engineer the proper location Debrecen, Hungary/, async function () {
-    const jobLocation = await element(by.css(jobLocationSelectorSTE)).getText();
-    return expect(jobLocation.includes("Debrecen".toUpperCase())).to.be.true;
-  });
-
-  Then(/should have Digital Solutions Architect the proper location Minsk, Belarus/, async function () {
-    const jobLocation = await element(by.xpath(jobLocationSelectorSA)).getText();
-    return expect(jobLocation.includes("Minsk".toUpperCase())).to.be.true;
-  });
-
-  Then(/should have Test Automation Engineer with description/, function () {
-    const jobDescription = element(by.css(jobDescriptionSelectorSTE));
-    browser.sleep(5000);
+  Then(/in the (\d+)th result description should be visible/, function (hit) {
+    const jobDescriptionSelector = `.search-result__item:nth-of-type(${hit}) .search-result__item-description`;
+    const jobDescription = element(by.css(jobDescriptionSelector));
     return expect(jobDescription.isPresent()).to.eventually.be.true;
   });
 
-  Then(/should have Digital Solutions Architect with description/, function () {
-    const jobDescription = element(by.css(jobDescriptionSelectorSA));
-    browser.sleep(5000);
-    return expect(jobDescription.isPresent()).to.eventually.be.true;
-  });
-
-  Then(/should have Test Automation Engineer apply button/, function () {
-    const jobResultApplyButton = element(by.css(applyButtonSelectorSTE));
+  Then(/apply button should be visible for (.*) position/, function (positionName) {
+    const form = positionName.toLowerCase().split(" ").join("-");
+    const applyButtonSelector = `a.search-result__item-apply[href*='.${form}']`;
+    const jobResultApplyButton = element(by.css(applyButtonSelector));
     return expect(jobResultApplyButton.isPresent()).to.eventually.be.true;
   });
 
-  Then(/should have Digital Solutions Architect apply button/, function () {
-    const jobResultApplyButton = element(by.css(applyButtonSelectorSA));
-    return expect(jobResultApplyButton.isPresent()).to.eventually.be.true;
-  });
-
-  Then(/should have description in the position of Test Automation Engineer/, async function () {
+  Then(/should have (.*) position name in the job description/, async function (positionName) {
     const positionDescription = await element(by.css("h1")).getText();
-    return expect(positionDescription.includes("Test Automation Engineer")).to.be.true;
+    return expect(positionDescription.includes(positionName)).to.be.true;
   });
 
-  Then(/should have description in the position of Digital Solutions Architect/, async function () {
-    const positionDescription = await element(by.css("h1")).getText();
-    return expect(positionDescription.includes("Digital Solutions Architect")).to.be.true;
-  });
-
-  Then(/should have Debrecen or Hungary in the description/, async function () {
+  Then(/should have (.*) city in the job description/, async function (city) {
     const locationDescription = await element(by.css(".recruiting-page__location")).getText();
-    return expect(locationDescription.includes("Debrecen")).to.be.true;
-  });
-
-  Then(/should have Minsk or Belarus in the description/, async function () {
-    const locationDescription = await element(by.css(".recruiting-page__location")).getText();
-    return expect(locationDescription.includes("Minsk")).to.be.true;
+    return expect(locationDescription.includes(city)).to.be.true;
   });
