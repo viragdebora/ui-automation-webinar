@@ -14,14 +14,16 @@ const departmentFilterArrow = element(by.css(".selected-params"));
   });
 
   //Whens
-  When(/(.*) and (.*) selected in the location filter box/, function (country, city) {
-    const locationCountry = element(by.xpath(`//strong[contains(text(),'${country}')]`));
+  When(/(.*) and (.*) selected in the location filter box/, async function (country, city) {
+    const locationCountry = element(by.css(`li[aria-label="${country}"]`));
     const locationCity = element(by.css(`[id*="${city}"]`));
     locationFilterArrow.click();
     browser.sleep(1000);
-    if (city === "Minsk") {
+    const countryClasses = await locationCountry.getAttribute('class');
+    const splittedClasses = countryClasses.split(' ');
+    if (splittedClasses.indexOf('dropdown-cities') === -1) {
       browser.actions().mouseMove(locationCountry).click().perform();
-    }
+    } 
     browser.sleep(1000);
     return locationCity.click();
   });
@@ -79,7 +81,6 @@ const departmentFilterArrow = element(by.css(".selected-params"));
     const form = positionName.toLowerCase().split(" ").join("-");
     const jobResultSelector = element(by.css(`a.search-result__item-name[href*='.${form}']`));
     browser.actions().mouseMove(jobResultSelector).perform();
-    //const jobResult = await jobResultSelector.getText();
     return expect(await jobResultSelector.getText()).to.equal(positionName);
   });
 
