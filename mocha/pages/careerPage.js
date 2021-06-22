@@ -25,7 +25,7 @@ class CareerPage {
         browser.isElementPresent(by.css(this.cookieBar))
             .then(isPresent => {
                 if (isPresent) {
-                    const cookieButton = element(by.css(".cookie-disclaimer__button"));
+                    const cookieButton = element(by.css(this.cookieBar));
                     cookieButton.click();
                 }
             });
@@ -57,7 +57,9 @@ class CareerPage {
         return await this.selectedDepartmentFieldSelector.getText();
     }
 
-    submitSearch() {
+    async submitSearch() {
+        await this.selectLocation();
+        this.selectDepartment();
         return this.button.click();
     }
 }

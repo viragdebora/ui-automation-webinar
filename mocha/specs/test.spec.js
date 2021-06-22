@@ -1,15 +1,8 @@
-const testData1 = {
-    country : "Hungary",
-    city: "Debrecen",
-    department: "Software Test Engineering",
-    positionName: "Test Automation Engineer",
-    hit: "5"
-};
-
+const input = require('../test-data-files/input.json');
 const CareerPage = require('../pages/careerPage');
-const careerPage = new CareerPage(testData1);
+const careerPage = new CareerPage(input[0]);
 const JobResultsPage = require('../pages/jobResultsPage');
-const jobResultsPage = new JobResultsPage(testData1);
+const jobResultsPage = new JobResultsPage(input[0]);
 const JobPage = require('../pages/jobPage');
 const jobPage = new JobPage();
 
@@ -33,7 +26,7 @@ describe("Search for job", function() {
                 await careerPage.selectLocation();
             });
             it("should provide a way to filter to a specific location", async() => {
-                return expect(await careerPage.getSelectedCity()).to.equal(testData1.city);
+                return expect(await careerPage.getSelectedCity()).to.equal(input[0].city);
             });
         });
         describe("Department filter box", () => {
@@ -41,21 +34,20 @@ describe("Search for job", function() {
                 careerPage.selectDepartment();
             });
             it("should provide a way to filter to a specific department", async() => {
-                return expect(await careerPage.getSelectedDepartment()).to.equal(testData1.department);
+                return expect(await careerPage.getSelectedDepartment()).to.equal(input[0].department.toUpperCase());
             });
         });
-        describe("Searching", () => {
-            beforeEach(async() => {
-                await careerPage.selectLocation();
-                careerPage.selectDepartment();
+        describe.only("Searching", () => {
+            beforeEach(() => {
                 careerPage.submitSearch();
                 jobResultsPage.scrollToResult();
             });
-            it("should have a proper job found", async() => {
-                return expect(await jobResultsPage.getPositionName()).to.equal(testData1.positionName);
+            it("should have a proper job found", () => {
+                return expect(jobResultsPage.jobResultSelector.isPresent()).to.eventually.be.true;
             });
             it("should have job with proper location", async() => {
-                return expect(await jobResultsPage.getLocationOfJob().includes(testData1.city.toUpperCase())).to.be.true;
+                const locationOfJob = await jobResultsPage.getLocationOfJob();
+                return expect(locationOfJob.includes(input[0].city.toUpperCase())).to.be.true;
             });
             it("should have job with description", () => {
                 return expect(jobResultsPage.jobDescription.isPresent()).to.eventually.be.true;
@@ -67,17 +59,15 @@ describe("Search for job", function() {
     });
     describe("Applying to position", () => {
         beforeEach(() => {
-            careerPage.selectLocation();
-            careerPage.selectDepartment();
-            careerPage.submitSearch();
+            careerPage.submitSearch()
             jobResultsPage.scrollToResult();
-            return jobResultsPage.applyToPosition();
-        })
-        it("should have a proper position name in the description", () => {
-            return expect(jobPage.getPositionName.includes(testData1.city)).to.be.true;
+            jobResultsPage.applyToPosition();
         });
-        it("should have a proper location in the description", () => {
-            return expect(jobPage.getLocation.includes(testData1.city)).to.be.true;
+        it("should have a proper position name in the description", async () => {
+            return expect((await jobPage.getPositionName()).includes(input[0].positionName)).to.be.true;
+        });
+        it("should have a proper location in the description", async () => {
+            return expect((await jobPage.getLocation()).includes(input[0].city)).to.be.true;
         });
     });
 });
