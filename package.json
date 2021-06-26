@@ -7,7 +7,7 @@
     "postinstall": "npm run wd:update",
     "wd:update": "webdriver-manager update",
     "test:cucumber": "protractor ./cucumber/protractor.config.js",
-    "test:mocha": "protractor ./mocha/protractor.config.js"
+    "test:mocha": "protractor ./mocha/protractor.config.js --"
   },
   "author": "",
   "license": "ISC",
