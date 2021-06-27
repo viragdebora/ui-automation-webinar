@@ -1,10 +1,9 @@
 const input = require(`../test-data-files/${process.argv[process.argv.length - 1]}`);
 const CareerPage = require('../pages/careerPage');
-const careerPage = new CareerPage(input);
 const JobResultsPage = require('../pages/jobResultsPage');
-const jobResultsPage = new JobResultsPage(input);
 const JobPage = require('../pages/jobPage');
-const { browser } = require('protractor');
+const careerPage = new CareerPage(input);
+const jobResultsPage = new JobResultsPage(input);
 const jobPage = new JobPage();
 
 describe("Search for job", function() {
@@ -40,8 +39,7 @@ describe("Search for job", function() {
         });
         describe("Searching", () => {
             beforeEach(() => {
-                //careerPage.submitSearch();
-                browser.get("https://www.epam.com/careers/job-listings?country=Hungary&city=Debrecen&department=Software+Test+Engineering");
+                careerPage.submitSearch();
                 jobResultsPage.scrollToResult();
             });
             it("should have a proper job found", () => {
@@ -61,10 +59,9 @@ describe("Search for job", function() {
     });
     describe("Applying to position", () => {
         beforeEach(() => {
-            //careerPage.submitSearch();
-            browser.get("https://www.epam.com/careers/job-listings/job.19100.test-automation-engineer_debrecen_hungary");
-            // jobResultsPage.scrollToResult();
-            // jobResultsPage.applyToPosition();
+            careerPage.submitSearch();
+            jobResultsPage.scrollToResult();
+            jobResultsPage.applyToPosition();
         });
         it("should have a proper position name in the description", async () => {
             return expect((await jobPage.getPositionName()).includes(input.positionName)).to.be.true;

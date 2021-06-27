@@ -1,3 +1,6 @@
+const { browser, protractor } = require("protractor");
+const EC = protractor.ExpectedConditions;
+
 class JobResultsPage {
     constructor(testData) {
         const format = (testData.positionName).toLowerCase().split(" ").join("-");
@@ -8,6 +11,7 @@ class JobResultsPage {
     }
 
     scrollToResult() {
+        browser.wait(EC.visibilityOf(this.jobResultSelector), 5000);
         return browser.actions().mouseMove(this.jobResultSelector).perform();
     }
 

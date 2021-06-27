@@ -1,5 +1,5 @@
-const { element, browser } = require("protractor");
-const expect = require('chai').expect;
+const { element, browser, protractor } = require("protractor");
+const EC = protractor.ExpectedConditions;
 
 class CareerPage {
     constructor(testData) {
@@ -39,7 +39,7 @@ class CareerPage {
         if (splittedClasses.indexOf('dropdown-cities') === -1) {
             browser.actions().mouseMove(this.locationCountry).click().perform();
         } 
-        browser.sleep(1000);
+        browser.wait(EC.elementToBeClickable(this.locationCity),5000);
         return this.locationCity.click();
     }
 
@@ -49,7 +49,7 @@ class CareerPage {
 
     selectDepartment() {
         this.departmentFilterArrow.click();
-        browser.sleep(1000);
+        browser.wait(EC.elementToBeClickable(this.departmentFilter), 5000);
         this.departmentFilter.click();
     }
 

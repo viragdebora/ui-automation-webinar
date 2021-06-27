@@ -36,7 +36,7 @@ setDefaultTimeout(GLOBAL_TIMEOUT);
     return careerPage.cookieClose();
   });
 
-  Then(/the (.*) should be visible/, function (selector) {
+  Then(/the (logo|search_form) should be visible/, function (selector) {
     const selectedElement = (selector === "logo") ? careerPage.logo : careerPage.searchForm;
     return expect(selectedElement.isPresent()).to.eventually.be.true;
   });
@@ -58,11 +58,11 @@ setDefaultTimeout(GLOBAL_TIMEOUT);
   });
 
   Then(/the proper location in the (\d+)th result should be (.*)/, async function (hit, city) {
-    return expect(await jobResultsPage.getLocationOfJob(hit).includes(city.toUpperCase())).to.be.true;
+    return expect((await jobResultsPage.getLocationOfJob(hit)).includes(city.toUpperCase())).to.be.true;
   });
 
   Then(/in the (\d+)th result description should be visible/, function (hit) {
-    return expect(jobResultsPage.jobDescription(hit).isPresent()).to.eventually.be.true;
+    return expect(jobResultsPage.getJobDescription(hit).isPresent()).to.eventually.be.true;
   });
 
   Then(/apply button should be visible for (.*) position/, function (positionName) {
@@ -70,9 +70,9 @@ setDefaultTimeout(GLOBAL_TIMEOUT);
   });
 
   Then(/should have (.*) position name in the job description/, async function (positionName) {
-    return expect(await jobPage.getPositionName().includes(positionName)).to.be.true;
+    return expect((await jobPage.getPositionName()).includes(positionName)).to.be.true;
   });
 
   Then(/should have (.*) city in the job description/, async function (city) {
-    return expect(await jobPage.getLocation().includes(city)).to.be.true;
+    return expect((await jobPage.getLocation()).includes(city)).to.be.true;
   });

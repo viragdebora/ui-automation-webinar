@@ -1,3 +1,6 @@
+const { browser, protractor } = require("protractor");
+const EC = protractor.ExpectedConditions;
+
 class JobResultsPage {
     constructor() {
         this.jobLocation = ".search-result__location";
@@ -18,18 +21,17 @@ class JobResultsPage {
 
     scrollToResult(positionName) {
         const selector = this.jobResultSelector(this.format(positionName));
+        browser.wait(EC.visibilityOf(selector), 5000);
         return browser.actions().mouseMove(selector).perform();
     }
 
     async getPositionName(positionName) {
         const selector = this.jobResultSelector(this.format(positionName));
-        console.log(selector.getText());
         return await selector.getText();
     }
 
     async getLocationOfJob(hit) {
         const location = element(by.css(`${this.searchResultItem(hit)} ${this.jobLocation}`));
-        console.log(location);
         return await location.getText();
     }
 
@@ -38,7 +40,7 @@ class JobResultsPage {
     }
 
     getApplyButton(position) {
-        return element(by.css(`a.search-result__item-apply[href*='.${format(position)}']`));
+        return element(by.css(`a.search-result__item-apply[href*='.${this.format(position)}']`));
     }
 
     applyToPosition(positionName) {

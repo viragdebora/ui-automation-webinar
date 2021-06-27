@@ -1,4 +1,8 @@
-const { element, browser } = require("protractor");
+const { element, browser, protractor, ProtractorExpectedConditions } = require("protractor");
+
+/**
+ * @type {ProtractorExpectedConditions}
+ */
 const EC = protractor.ExpectedConditions;
 
 class CareerPage {
@@ -37,7 +41,7 @@ class CareerPage {
         if (splittedClasses.indexOf('dropdown-cities') === -1) {
             browser.actions().mouseMove(locationCountry).click().perform();
         } 
-        EC.visibilityOf(locationCity);
+        browser.wait(EC.elementToBeClickable(locationCity),5000);
         return locationCity.click();
     }
 
@@ -48,12 +52,13 @@ class CareerPage {
     selectDepartment(department) {
         const departmentFilter = element(by.xpath(`//span[contains(text(),'${department}')]`));
         this.departmentFilterArrow.click();
-        EC.visibilityOf(departmentFilter);
-        return departmentFilter.click();
+        browser.wait(EC.elementToBeClickable(departmentFilter), 5000);
+        return departmentFilter.click()
     }
 
     async getSelectedDepartment(department) {
         const selectedDepartmentFieldSelector = element(by.css(`li[data-value="${department}"]`));
+        browser.wait(EC.textToBePresentInElement(selectedDepartmentFieldSelector, department.toUpperCase()), 5000);
         return await selectedDepartmentFieldSelector.getText();
     }
 
