@@ -22,7 +22,7 @@ const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/secti
 const jobDescriptionSelector = "//p[contains(text(),'Test Automation Engineer')]";
 const applyButtonSelector = "a.search-result__item-apply[href*='.test-automation-engineer']";
 
-describe.skip("Search for Test Automation Engineer in Debrecen", function() {
+describe("Search for Test Automation Engineer in Debrecen", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
         browser.get(careerPageURL);
