@@ -3,15 +3,18 @@
 const GLOBAL_TIMEOUT = 40e3;
 
 exports.config = {
-    specs: '../specs/**/*.spec.js',
+    specs: '../features/**/*.feature',
     capabilities: {
-        browserName: 'chrome',
+        browserName: 'firefox'
     },
     directConnect: true,
-    mochaOpts: {
-        reporter: 'spec'
+    cucumberOpts: {
+        require: ['../step_definitions/**/*.js'],
+        tags: ['~@wip'],
+        format: ['progress', 'json:cucumber.json']
     },
-    framework: 'mocha',
+    framework: 'custom',
+    frameworkPath: require.resolve('protractor-cucumber-framework'),
     getPageTimeout: GLOBAL_TIMEOUT,
     onPrepare: async function () {
         global.GLOBAL_TIMEOUT = GLOBAL_TIMEOUT;
@@ -27,16 +30,5 @@ exports.config = {
         } catch (e) {
             await browser.manage().window().setSize(1800, 1012);
         }
-
-        protractor.browser.takeScreenshot().then(function(screenshot) {
-            const screenshots = path.join(process.cwd(), 'e2e/reports/screenshots');
-        
-            fs.writeFile(screenshots + '/test.png', screenshot, 'base64', function (err) {
-              if (err) {
-                  throw err;
-              }
-              console.log('File saved.');
-            });
-          });
     }
 };

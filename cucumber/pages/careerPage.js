@@ -32,13 +32,13 @@ class CareerPage {
     }
 
     async selectLocation(country, city) {
-        const locationCountry = element(by.css(`li[aria-label="${country}"`));
-        const locationCity = element(by.css(`[id*="${city}"`));
+        const locationCountry = element(by.css(`li[aria-label="${country}"]`));
+        const locationCity = element(by.css(`[id*="${city}"]`));
         this.locationFilterArrow.click();
-        browser.sleep(1000);
         const countryClasses = await locationCountry.getAttribute('class');
         const splittedClasses = countryClasses.split(' ');
         if (splittedClasses.indexOf('dropdown-cities') === -1) {
+            browser.sleep(1000);
             browser.actions().mouseMove(locationCountry).click().perform();
         } 
         browser.wait(EC.elementToBeClickable(locationCity),5000);
