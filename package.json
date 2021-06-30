@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall": "npm run wd:update",
     "wd:update": "webdriver-manager update",
-    "test:cucumber": "protractor ./cucumber/config/run-in-chrome.config.js",
-    "test:mocha": "protractor ./mocha/config/selenium-grid.config.js --"
+    "test:cucumber": "protractor ./cucumber/config/selenium-grid.config.js",
+    "test:mocha": "protractor ./mocha/config/selenium-grid.config.js"
   },
   "author": "",
   "license": "ISC",

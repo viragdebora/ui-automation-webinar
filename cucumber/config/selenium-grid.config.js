@@ -3,21 +3,19 @@
 const GLOBAL_TIMEOUT = 40e3;
 
 exports.config = {
-    specs: [
-        '../specs/**/testData1.spec.js',
-        '../specs/**/testData2.spec.js'
-    ],
+    specs: '../features/**/*.feature',
     capabilities: {
-        browserName: 'chrome',
-        'shardTestFiles': true,
-        'maxInstances': 2
+        browserName: 'chrome'
     },
     usingServer: 'http://localhost:4444/wd/hub',
     directConnect: false,
-    mochaOpts: {
-        reporter: 'spec'
+    cucumberOpts: {
+        require: ['../step_definitions/**/*.js'],
+        tags: ['~@wip'],
+        format: ['progress', 'json:cucumber.json']
     },
-    framework: 'mocha',
+    framework: 'custom',
+    frameworkPath: require.resolve('protractor-cucumber-framework'),
     getPageTimeout: GLOBAL_TIMEOUT,
     onPrepare: async function () {
         global.GLOBAL_TIMEOUT = GLOBAL_TIMEOUT;
