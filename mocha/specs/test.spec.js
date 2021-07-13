@@ -1,4 +1,4 @@
-const input = require(`../test-data-files/${process.argv[process.argv.length - 1]}`);
+//const input = require(`../test-data-files/${process.argv[process.argv.length - 1]}`);
 const CareerPage = require('../pages/careerPage');
 const JobResultsPage = require('../pages/jobResultsPage');
 const JobPage = require('../pages/jobPage');
