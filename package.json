@@ -6,8 +6,9 @@
   "scripts": {
     "postinstall": "npm run wd:update",
     "wd:update": "webdriver-manager update",
-    "test:cucumber": "protractor ./cucumber/protractor.config.js",
-    "test:mocha": "protractor ./mocha/protractor.config.js"
+    "test:cucumber": "protractor ./cucumber/config/run-in-chrome.config.js",
+    "test:mocha": "protractor ./mocha/config/run-in-chrome-with-mongodb.config.js",
+    "mocha-with-input": "protractor ./mocha/config/run-in-chrome.config.js --"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +16,9 @@
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "cucumber": "^6.0.5",
+    "express": "^4.17.1",
     "mocha": "^8.2.1",
+    "mongoose": "^5.13.2",
     "protractor": "^7.0.0",
     "protractor-cucumber-framework": "^6.2.1",
     "require-it": "^2.0.0"

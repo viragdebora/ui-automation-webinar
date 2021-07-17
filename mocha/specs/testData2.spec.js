@@ -23,7 +23,7 @@ const jobLocationSelector = "/html[1]/body[1]/div[2]/main[1]/div[1]/div[1]/secti
 const jobDescriptionSelector = "//p[contains(text(),'Azure Architect')]";
 const applyButtonSelector = "a.search-result__item-apply[href*='.azure-architect']";
 
-describe.skip("Search for Azure Architect in Minsk", function() {
+describe("Search for Azure Architect in Minsk", function() {
     this.timeout(GLOBAL_TIMEOUT);
     beforeEach(() => {
         browser.get(careerPageURL);
@@ -60,7 +60,7 @@ describe.skip("Search for Azure Architect in Minsk", function() {
         describe("Department filter box", () => {
             beforeEach(() => {
                 departmentFilterArrow.click();
-                EC.visibilityOf(departmentFilter);
+                browser.sleep(1000);
                 departmentFilter.click();
             });
             it("should select one skill", async() => {

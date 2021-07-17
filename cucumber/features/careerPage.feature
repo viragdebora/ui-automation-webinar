@@ -6,8 +6,8 @@ Feature: EPAM job searching
   Scenario Outline: Search for <PositionName> in <City>
   Given the career page is opened
   Then the cookie bar should be closed
-  And the "logo" should be visible
-  And the "search_form" should be visible
+  And the logo should be visible
+  And the search_form should be visible
   
   When <Country> and <City> selected in the location filter box
   Then the <City> location should be selected
@@ -16,7 +16,8 @@ Feature: EPAM job searching
   Then the <Department> department should be selected
 
   When the search button is clicked
-  Then should have a proper job found for <PositionName> position
+  Then should be scroll to the <PositionName>
+  And should have a proper job found for <PositionName> position
   And the proper location in the <Hit>th result should be <City>
   And in the <Hit>th result description should be visible
   And apply button should be visible for <PositionName> position
